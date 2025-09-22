@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function AddTodo({ onAdd, title, setTitle, editIndex }) {
   return (
     <div>
