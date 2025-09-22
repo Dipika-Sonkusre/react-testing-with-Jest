@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import AddTodo from "./components/AddTodo";
+import Display from "./components/Display";
+
+import "./App.css";
+
+const initialData = [{ id: 1, title: "Sleep" }];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState(initialData);
+  const [title, setTitle] = useState("");
+
+  const [editIndex, setEditIndex] = useState(null);
+
+  const handleAdd = () => {
+    if (title === "") {
+      alert("Field can not be empty!");
+    } else {
+      if (editIndex) {
+        setTodos(
+          todos.map((prev) =>
+            prev.id === editIndex ? { ...prev, title: title } : prev
+          )
+        );
+      } else {
+        setTodos([
+          {
+            id: new Date().getTime().toString(),
+            title: title,
+          },
+          ...todos,
+        ]);
+      }
+    }
+    setTitle("");
+  };
+
+  const handleDelete = (id) => {
+    setTodos(todos.filter((t) => t.id !== id));
+  };
+
+  const handleEdit = (id) => {
+    setEditIndex(id);
+    const editedTodo = todos.find((todo) => todo.id === id);
+    setTitle(editedTodo.title);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <main>
+      <h1>Todo App</h1>
+      <AddTodo
+        onAdd={handleAdd}
+        title={title}
+        setTitle={setTitle}
+        editIndex={editIndex}
+      />
+      <Display todos={todos} onDelete={handleDelete} onEdit={handleEdit} />
+    </main>
+  );
 }
 
-export default App
+export default App;
